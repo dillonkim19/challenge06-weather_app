@@ -1,9 +1,27 @@
 const API_KEY = 'b80f4f4a76bd4c6a587f1efe91224ce5'
 
+var input = document.querySelector('#input')
+var searchButton = document.querySelector('#search-button')
+
+input.addEventListener('keyup', function(event){
+    if (event.key === 'Enter') {
+        createWeatherDisplay(event.target.value)
+    }
+})
+
+searchButton.addEventListener('click', function(event){
+    var inputCity = input.value;
+    console.log(inputCity);
+    createWeatherDisplay(inputCity);
+})
+
 var cityDate = $(".city-date") 
 var currentTemp = $(".current-temp") 
 var currentWind = $(".current-wind") 
 var currentHumidity = $(".current-humidity") 
+
+var cityWeather = document.querySelector(".city-weather")
+var fiveDay = document.querySelector(".five-day")
 
 var cityInfo = $(".city-info")
 
@@ -25,8 +43,8 @@ function getDate(unixTime) {
 }
 // console.log(myDate.toGMTString())
 
-function displayCurrentWeather(current) {
-    cityDate.text('Atlanta ' + getDate(current.dt))
+function displayCurrentWeather(current, cityName) {
+    cityDate.text(cityName + ': ' + getDate(current.dt))
     currentTemp.text('Temp: ' + current.temp)
     currentWind.text('Wind: ' + current.wind_speed + ' mph')
     currentHumidity.text('Humidity: ' + current.humidity + '%')
@@ -38,7 +56,13 @@ function displayForecast(daily) {
     // }
     // <div class="card card-one" style="width: 15rem;"></div>
     // <div class="card-body"></div>
+    cityWeather.setAttribute("class", "city-weather p-2 border border-dark")
+    fiveDay.setAttribute("style", "display: block")
+
     for (var i = 1; i < 6; i++){
+        
+ 
+
         var card = document.createElement('div')
         card.setAttribute("class", `card ${cardsArray[i-1]} col-sm-3 col-md-4 col-lg-2`)
         forecastCards.append(card)
@@ -80,26 +104,31 @@ function displayForecast(daily) {
 
 // var cityData;
 
-getGeoLocation('Atlanta')
-.then(response => response.json())
-.then(data => {
-    //same thing
-    // var lat = data[0].lat
-    // var lon = data[0].lon
-    console.log(data[0])
-    getCurrentWeather({ lat: data[0].lat, lon: data[0].lon })
-    .then(weatherResponse => weatherResponse.json())
-    .then(weatherData => {
-        // console.log(JSON.stringify(weatherData, null, 2))
-        console.log(weatherData)
-        displayCurrentWeather(weatherData.current);
-        displayForecast(weatherData.daily);
+function createWeatherDisplay(location) {
+    getGeoLocation(location)
+    .then(response => response.json())
+    .then(data => {
+        //same thing
+        // var lat = data[0].lat
+        // var lon = data[0].lon
+        console.log(data[0])
+        getCurrentWeather({ lat: data[0].lat, lon: data[0].lon })
+        .then(weatherResponse => weatherResponse.json())
+        .then(weatherData => {
+            // console.log(JSON.stringify(weatherData, null, 2))
+            console.log(weatherData)
+            displayCurrentWeather(weatherData.current, data[0].name);
+            displayForecast(weatherData.daily);
+        })
+        .catch(error => {
+            cityInfo.text(error.message)
+        })
     })
     .catch(error => {
         cityInfo.text(error.message)
     })
-})
-.catch(error => {
-    cityInfo.text(error.message)
-})
+}
+
+
+
 
