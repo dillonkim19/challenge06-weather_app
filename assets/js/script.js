@@ -7,7 +7,7 @@ var currentWind = $(".current-wind")
 var currentHumidity = $(".current-humidity") 
 var cityWeather = document.querySelector(".city-weather")
 var fiveDay = document.querySelector(".five-day")
-var cityInfo = $(".city-info")
+var cityInfo = document.querySelector('.city-info')
 var forecastCards = $(".forecast-cards")
 var sidePanel = document.querySelector('.side-panel')
 var historyPanel = document.querySelector('.history-panel')
@@ -146,13 +146,18 @@ function createWeatherDisplay(location) {
         console.log(data[0])
         
         if (data[0] == undefined) {
-            cityInfo.text("We couldn't find your city!")
+            cityInfo.textContent = "We couldn't find your city!"
+            cityInfo.setAttribute("style", "display: block")
         } else {
+            cityInfo.setAttribute("style", "display: none")
             var city = data[0].name
 
             historyArray.unshift(city);
             localStorage.setItem("historyArray", JSON.stringify(historyArray))
 
+            if (!historyArray.includes(city)) {
+                console.log("we don't have it!")
+            }
             historyPanel = document.querySelector('.history-panel')
             sidePanel.removeChild(historyPanel)
             showHistory();
@@ -170,12 +175,14 @@ function createWeatherDisplay(location) {
                 storeHistory(city);
             })
             .catch(error => {
-                cityInfo.text(error.message)
+                cityInfo.textContent = error.message
+                cityInfo.setAttribute("style", "display: block")
             })
         }
     })
     .catch(error => {
-        cityInfo.text(error.message)
+        cityInfo.textContent = error.message
+        cityInfo.setAttribute("style", "display: block")
     })
 }
 
