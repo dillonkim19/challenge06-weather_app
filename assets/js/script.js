@@ -16,23 +16,33 @@ var historyPanel = document.querySelector('.history-panel')
 const API_KEY = 'b80f4f4a76bd4c6a587f1efe91224ce5'
 var cardsArray = ['cards-one', 'cards-two', 'cards-three', 'cards-four', 'cards-five']
 
-function showHistory(index) {
+sidePanel.removeChild(historyPanel)
+
+function clickHistory(index) {
     createWeatherDisplay(historyArray[index])
 }
 
-if (!JSON.parse(localStorage.getItem("historyArray"))){
-    historyArray = [];
-    localStorage.setItem("historyArray", JSON.stringify(historyArray))
-} else {
+function showHistory() {
+
+    var historyPanel = document.createElement('div')
+    historyPanel.setAttribute("class", "side-panel history-panel w-100")
+    sidePanel.appendChild(historyPanel)
+    
     historyArray = JSON.parse(localStorage.getItem("historyArray"));
     for (var i = 0; i < historyArray.length; i++) {
         var historyBtn = document.createElement('button')
         historyBtn.textContent = `${historyArray[i]}`
         historyBtn.setAttribute("class", "btn btn-secondary w-100 border-bottom mb-1 mt-1")
         historyPanel.appendChild(historyBtn)
-
-        historyBtn.addEventListener("click", showHistory.bind(this, i))
+        historyBtn.addEventListener("click", clickHistory.bind(this, i))
     }
+}
+
+if (!JSON.parse(localStorage.getItem("historyArray"))){
+    historyArray = [];
+    localStorage.setItem("historyArray", JSON.stringify(historyArray))
+} else {
+    showHistory();
 }
 
 
@@ -143,6 +153,9 @@ function createWeatherDisplay(location) {
             historyArray.unshift(city);
             localStorage.setItem("historyArray", JSON.stringify(historyArray))
 
+            historyPanel = document.querySelector('.history-panel')
+            sidePanel.removeChild(historyPanel)
+            showHistory();
 
             getCurrentWeather({ lat: data[0].lat, lon: data[0].lon })
             .then(weatherResponse => weatherResponse.json())
