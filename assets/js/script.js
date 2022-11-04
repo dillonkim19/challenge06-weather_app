@@ -9,10 +9,33 @@ var cityWeather = document.querySelector(".city-weather")
 var fiveDay = document.querySelector(".five-day")
 var cityInfo = $(".city-info")
 var forecastCards = $(".forecast-cards")
+var sidePanel = document.querySelector('.side-panel')
+var historyPanel = document.querySelector('.history-panel')
 
 // variables
-var cardsArray = ['cards-one', 'cards-two', 'cards-three', 'cards-four', 'cards-five']
 const API_KEY = 'b80f4f4a76bd4c6a587f1efe91224ce5'
+var cardsArray = ['cards-one', 'cards-two', 'cards-three', 'cards-four', 'cards-five']
+
+function showHistory(index) {
+    createWeatherDisplay(historyArray[index])
+}
+
+if (!JSON.parse(localStorage.getItem("historyArray"))){
+    historyArray = [];
+    localStorage.setItem("historyArray", JSON.stringify(historyArray))
+} else {
+    historyArray = JSON.parse(localStorage.getItem("historyArray"));
+    for (var i = 0; i < historyArray.length; i++) {
+        var historyBtn = document.createElement('button')
+        historyBtn.textContent = `${historyArray[i]}`
+        historyBtn.setAttribute("class", "btn btn-secondary w-100 border-bottom mb-1 mt-1")
+        historyPanel.appendChild(historyBtn)
+
+        historyBtn.addEventListener("click", showHistory.bind(this, i))
+    }
+}
+
+
 
 // event when user presses enter after input
 input.addEventListener('keyup', function(event){
@@ -101,6 +124,10 @@ function displayForecast(daily) {
     
 }
 
+function storeHistory(city) {
+
+}
+
 // Main function to fetch APIs
 function createWeatherDisplay(location) {
     getGeoLocation(location)
@@ -111,13 +138,23 @@ function createWeatherDisplay(location) {
         if (data[0] == undefined) {
             cityInfo.text("We couldn't find your city!")
         } else {
+            var city = data[0].name
+
+            historyArray.unshift(city);
+            localStorage.setItem("historyArray", JSON.stringify(historyArray))
+
+
             getCurrentWeather({ lat: data[0].lat, lon: data[0].lon })
             .then(weatherResponse => weatherResponse.json())
             .then(weatherData => {
             // console.log(JSON.stringify(weatherData, null, 2))
                 console.log(weatherData)
-                displayCurrentWeather(weatherData.current, data[0].name);
+
+                
+
+                displayCurrentWeather(weatherData.current, city);
                 displayForecast(weatherData.daily);
+                storeHistory(city);
             })
             .catch(error => {
                 cityInfo.text(error.message)
