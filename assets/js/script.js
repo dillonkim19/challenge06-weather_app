@@ -106,21 +106,23 @@ function createWeatherDisplay(location) {
     getGeoLocation(location)
     .then(response => response.json())
     .then(data => {
-        //same thing
-        // var lat = data[0].lat
-        // var lon = data[0].lon
         console.log(data[0])
-        getCurrentWeather({ lat: data[0].lat, lon: data[0].lon })
-        .then(weatherResponse => weatherResponse.json())
-        .then(weatherData => {
+        
+        if (data[0] == undefined) {
+            cityInfo.text("We couldn't find your city!")
+        } else {
+            getCurrentWeather({ lat: data[0].lat, lon: data[0].lon })
+            .then(weatherResponse => weatherResponse.json())
+            .then(weatherData => {
             // console.log(JSON.stringify(weatherData, null, 2))
-            console.log(weatherData)
-            displayCurrentWeather(weatherData.current, data[0].name);
-            displayForecast(weatherData.daily);
-        })
-        .catch(error => {
-            cityInfo.text(error.message)
-        })
+                console.log(weatherData)
+                displayCurrentWeather(weatherData.current, data[0].name);
+                displayForecast(weatherData.daily);
+            })
+            .catch(error => {
+                cityInfo.text(error.message)
+            })
+        }
     })
     .catch(error => {
         cityInfo.text(error.message)
