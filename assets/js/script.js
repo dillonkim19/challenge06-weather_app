@@ -57,7 +57,7 @@ input.addEventListener('keyup', function(event){
 // event when user clicks on search after input
 searchButton.addEventListener('click', function(event){
     var inputCity = input.value;
-    console.log(inputCity);
+    //console.log(inputCity);
     createWeatherDisplay(inputCity);
 })
 
@@ -99,6 +99,15 @@ function displayForecast(daily) {
 
     for (var i = 1; i < 6; i++){
     
+        var cardExists = $(`.${cardsArray[i-1]}`)
+        if (cardExists == null){
+            
+        } else {
+            //console.log("already Have!")
+            cardExists.remove()
+
+        }
+
         var card = document.createElement('div')
         card.setAttribute("class", `card ${cardsArray[i-1]} col-sm-3 col-md-4 col-lg-2`)
         forecastCards.append(card)
@@ -143,7 +152,7 @@ function createWeatherDisplay(location) {
     getGeoLocation(location)
     .then(response => response.json())
     .then(data => {
-        console.log(data[0])
+        //console.log(data[0])
         
         if (data[0] == undefined) {
             cityInfo.textContent = "We couldn't find your city!"
@@ -152,12 +161,23 @@ function createWeatherDisplay(location) {
             cityInfo.setAttribute("style", "display: none")
             var city = data[0].name
 
-            historyArray.unshift(city);
-            localStorage.setItem("historyArray", JSON.stringify(historyArray))
-
+            // add city if not already have to history
             if (!historyArray.includes(city)) {
-                console.log("we don't have it!")
+                
+                // only show eight history
+                if(historyArray.length == 8){
+                    historyArray.pop()
+                    
+                }
+                
+                //console.log("we don't have it!")
+                historyArray.unshift(city);
+
+                localStorage.setItem("historyArray", JSON.stringify(historyArray))
+                
             }
+            
+
             historyPanel = document.querySelector('.history-panel')
             sidePanel.removeChild(historyPanel)
             showHistory();
@@ -166,7 +186,7 @@ function createWeatherDisplay(location) {
             .then(weatherResponse => weatherResponse.json())
             .then(weatherData => {
             // console.log(JSON.stringify(weatherData, null, 2))
-                console.log(weatherData)
+                //console.log(weatherData)
 
                 
 
