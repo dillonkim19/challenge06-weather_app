@@ -64,7 +64,7 @@ searchButton.addEventListener('click', function(event){
 
 // get geo location from open weather map api
 function getGeoLocation(query, limit = 5) {
-    return fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=${limit}&appid=${API_KEY}`)
+    return fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=${limit}&appid=${API_KEY}`)
 }
 
 // get current weather from open weather map api
